@@ -1,0 +1,5 @@
+{
+  "name": "FinSight AI",
+  "description": "A smart personal finance dashboard featuring transaction tracking, visual analytics, and AI-powered financial advice powered by Gemini.",
+  "requestFramePermissions": []
+}
