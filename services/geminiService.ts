@@ -1,10 +1,22 @@
 import { GoogleGenAI } from "@google/genai";
 import { Transaction } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Do not initialize at top-level to avoid runtime crashes if env var is missing
+// const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const analyzeFinances = async (transactions: Transaction[]): Promise<string> => {
+  // Access the key safely inside the function
+  const apiKey = process.env.API_KEY;
+
+  if (!apiKey) {
+    console.error("API Key is missing in environment variables");
+    return "Error: API Key is missing. Please add your GEMINI_API_KEY to the Vercel project settings.";
+  }
+
   try {
+    // Initialize the client only when needed
+    const ai = new GoogleGenAI({ apiKey });
+    
     const transactionSummary = JSON.stringify(transactions);
     
     const prompt = `
@@ -31,6 +43,6 @@ export const analyzeFinances = async (transactions: Transaction[]): Promise<stri
     return response.text || "Unable to generate analysis at this time.";
   } catch (error) {
     console.error("Error calling Gemini API:", error);
-    return "Error generating insights. Please check your API key configuration.";
+    return "Error generating insights. Please check your API key configuration and try again.";
   }
 };
